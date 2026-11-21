@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.1
+- Watchdog riscritto con `nmcli`: opzioni `wifi_ssid` / `wifi_password` (creazione automatica
+  del profilo Wi-Fi della stufa), risparmio energetico Wi-Fi disattivato, tentativi infiniti,
+  scansione forzata e riconnessione ogni 20 s, rimozione dei profili duplicati.
+- Canale 0 quando la rete della stufa non è visibile (prima veniva mostrato un valore errato).
+
 ## 1.5.3
 - Watchdog: canale e segnale Wi-Fi della stufa pubblicati come sensori; log dei cambi di
   canale e delle disconnessioni/riconnessioni con durata.

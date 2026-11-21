@@ -3,7 +3,7 @@ ARG BUILD_FROM=ghcr.io/home-assistant/base:3.24
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
-RUN apk add --no-cache python3 py3-pip glib mosquitto-clients \
+RUN apk add --no-cache python3 py3-pip networkmanager-cli mosquitto-clients \
  && pip3 install --break-system-packages --no-cache-dir \
       paho-mqtt==1.6.1 \
       websocket-client==1.8.0

@@ -21,10 +21,11 @@ The MCZ cloud and the official app keep working in parallel, but are not needed.
 - **Sensors**: state (enum with all states and error codes A01–A23), room / flue gas /
   board temperature, flue fan RPM, operating hours (total and per power level),
   hours to service, number of ignitions, connection
-- **Wi-Fi watchdog**: the stove's access point occasionally drops clients (often when it
-  changes channel) and NetworkManager may then refuse to reconnect (`no-secrets`).
-  The watchdog re-activates the saved connection, and publishes the stove's Wi-Fi
-  **channel** and **signal** as sensors for troubleshooting.
+- **Wi-Fi manager / watchdog**: the stove's access point drops clients often (it changes
+  channel and sometimes disappears for minutes). The add-on manages the Wi-Fi profile
+  itself (optional `wifi_ssid` / `wifi_password`): power saving off, infinite retries,
+  forced rescan and reconnect every 20 s, duplicate profiles removed. It publishes the
+  stove's Wi-Fi **channel** and **signal** as sensors for troubleshooting.
 
 ## Requirements
 
@@ -38,22 +39,24 @@ The MCZ cloud and the official app keep working in parallel, but are not needed.
 
 ## Installation
 
-1. **Join the stove's Wi-Fi** with the host's Wi-Fi interface, static IP, **no gateway**
-   (so internet keeps going through Ethernet). From the *Terminal & SSH* add-on (zsh):
-
-   ```sh
-   read -rs "P?Stove Wi-Fi password: "; echo; ha network update wlan0 \
-     --ipv4-method static --ipv4-address 192.168.120.10/24 --ipv6-method disabled \
-     --wifi-mode infrastructure --wifi-ssid "MCZ-XXXXXXXXXXXX" --wifi-auth wpa-psk \
-     --wifi-psk "$P"; unset P
-   ```
-
-   The password is printed on the stove label / QR code. Check with `ping 192.168.120.1`.
-
-2. **Add this repository** in Home Assistant: *Settings → Add-ons → Add-on store →
+1. **Add this repository** in Home Assistant: *Settings → Add-ons → Add-on store →
    ⋮ → Repositories*, paste `https://github.com/azatoth77/ha-mcz-maestro-local`.
-3. Install **MCZ Maestro (locale)**, start it, and check the log.
-   The device **Stufa MCZ** appears under the MQTT integration.
+2. Install **MCZ Maestro (locale)**.
+3. In the add-on **Configuration** tab set `wifi_ssid` (the stove's `MCZ-…` network) and
+   `wifi_password` (printed on the stove label / QR code). The add-on joins the host's
+   Wi-Fi interface to the stove with a static IP and **no gateway**, so internet keeps
+   going through Ethernet.
+4. Start the add-on and check the log. The device **Stufa MCZ** appears under the MQTT
+   integration.
+
+<details><summary>Alternative: join the stove's Wi-Fi manually</summary>
+
+From the *Terminal & SSH* add-on (zsh), then leave `wifi_ssid` / `wifi_password` empty:
+
+```sh
+read -rs "P?Stove Wi-Fi password: "; echo; ha network update wlan0   --ipv4-method static --ipv4-address 192.168.120.10/24 --ipv6-method disabled   --wifi-mode infrastructure --wifi-ssid "MCZ-XXXXXXXXXXXX" --wifi-auth wpa-psk   --wifi-psk "$P"; unset P
+```
+</details>
 
 See [the add-on documentation](mcz_maestro/DOCS.md) for options, entity details and
 troubleshooting.

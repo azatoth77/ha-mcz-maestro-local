@@ -17,8 +17,24 @@ Controllo locale della stufa MCZ Maestro tramite la sua rete Wi-Fi, senza cloud.
 | `mcz_port` | `81` | Porta websocket della stufa |
 | `device_name` | `Stufa MCZ` | Nome del dispositivo in Home Assistant |
 | `topic_prefix` | `Maestro` | Prefisso dei topic MQTT (`Maestro/<valore>`, comandi su `Maestro/Command/<valore>`) |
-| `wifi_watchdog` | `true` | Riattiva la connessione Wi-Fi verso la stufa se NetworkManager si blocca |
+| `wifi_watchdog` | `true` | Gestisce e sorveglia la connessione Wi-Fi verso la stufa |
 | `wifi_interface` | `wlan0` | Interfaccia Wi-Fi collegata alla stufa |
+| `wifi_ssid` | *(vuoto)* | Rete della stufa (`MCZ-…`). Se vuoto usa il profilo `MCZ-…` già presente |
+| `wifi_password` | *(vuoto)* | Password della rete della stufa (etichetta / QR code). Campo nascosto |
+| `wifi_ip` | `192.168.120.10/24` | IP statico dell'host sulla rete della stufa (solo se il profilo viene creato dall'add-on) |
+| `wifi_check_interval` | `20` | Secondi tra un controllo e l'altro |
+
+### Cosa fa il watchdog Wi-Fi
+
+- **Crea il profilo** Wi-Fi della stufa se manca (servono `wifi_ssid` e `wifi_password`):
+  non serve più collegare l'interfaccia a mano.
+- Sul profilo imposta **risparmio energetico disattivato** (causa nota di disconnessioni sui
+  Raspberry Pi), **tentativi di autoconnessione infiniti** e **nessun gateway**; se c'è la
+  password nelle opzioni la reimposta, sbloccando NetworkManager dopo un errore `no-secrets`.
+- **Elimina i profili duplicati** per la stessa rete.
+- Se il Wi-Fi resta scollegato per due controlli, **forza una scansione** e **riattiva il
+  profilo** appena la rete della stufa è visibile.
+- Pubblica **canale** (0 = rete non visibile) e **segnale** come sensori.
 
 ## Entità
 
